@@ -1,2 +1,11 @@
 O Reciclagem para Todos é uma plataforma digital que conecta moradores, cooperativas de reciclagem e moradores locais, criando um ecossistema colaborativo para a gestão de resíduos sólidos.
 O sistema transforma a reciclagem em uma prática comunitária e recompensadora, com gamificação e pontos que podem ser trocados por descontos em parceiros. Além disso, oferece conteúdo educativo sobre separação correta e impacto ambiental, incentiva o reconhecimento social de comunidades engajadas e fortalece o trabalho de cooperativas e catadores.
+
+3°A de Informática
+_____________________________________________
+Autores: Ana Clara Rodrigues Petri Sarmento, 
+Grazielly Borges de Lima, 
+Kaio Brito Alves, 
+Larissa de Oliveira Mendes, 
+Nicolly de Souza Dias e
+ Tayla Leite Correia.
