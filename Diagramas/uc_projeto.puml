@@ -4,17 +4,13 @@
 actor Morador
 actor "Cooperativa/Catador" as Cooperativa
 
-Morador --> (Separar lixo reciclável)
 Morador --> (Registrar material reciclável)
 Morador --> (Agendar coleta)
 Morador --> (Visualizar ranking e pontuação)
 Morador --> (Receber benefícios)
 
 Cooperativa --> (Coletar material)
-Cooperativa --> (Pesar material)
-Cooperativa --> (Destinar corretamente o material)
 Cooperativa --> (Visualizar ranking dos moradores)
-
 
 @enduml
 
