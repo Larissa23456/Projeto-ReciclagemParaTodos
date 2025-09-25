@@ -1,0 +1,49 @@
+@startuml
+!theme aws-orange
+
+entity Morador {
+    +id_morador : int <<PK>>
+    nome : string
+    endereco : string
+    pontuacao : int
+}
+
+entity Material {
+    +id_material : int <<PK>>
+    tipo : string
+    quantidade : float
+    data_registro : date
+    id_morador : int <<FK>>
+}
+
+entity Coleta {
+    +id_coleta : int <<PK>>
+    data_coleta : date
+    id_morador : int <<FK>>
+    id_cooperativa : int <<FK>>
+}
+
+entity Cooperativa {
+    +id_cooperativa : int <<PK>>
+    nome : string
+}
+
+entity Beneficio {
+    +id_beneficio : int <<PK>>
+    descricao : string
+    pontos_necessarios : int
+}
+
+entity MoradorBeneficio {
+    +id_morador : int <<FK>>
+    +id_beneficio : int <<FK>>
+    data_recebimento : date
+}
+
+Morador ||--o{ Material : "registra"
+Morador ||--o{ Coleta : "agenda"
+Cooperativa ||--o{ Coleta : "realiza"
+Material }o--|| Coleta : "coletado em"
+Morador ||--o{ MoradorBeneficio : "recebe"
+Beneficio ||--o{ MoradorBeneficio : "é recebido"
+@enduml
