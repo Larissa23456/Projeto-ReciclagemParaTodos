@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tela de Cadastro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .center-box {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-buttons {
+            max-width: 400px;
+            width: 100%;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center-box">
+        <h2 class="text-center mb-4">Tela de cadastro do Usuário</h2>
+
+        <form>
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" name="name" id="name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Número</label>
+                <input type="tel" class="form-control" id="phone" placeholder="(xx) xxxxx-xxxx" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text">Nunca compartilharemos seu email com ninguém.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirmar Senha</label>
+                <input type="password" class="form-control" id="confirmPassword" required>
+            </div>
+
+            <div class="mb-3 d-flex justify-content-center align-items-center gap-2">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Lembrar-me</label>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
+            <br>
+            <div class="text-center" id="emailHelp" class="form-text">Ao clicar em cadastre-se você aceita as 
+                <a href="#">Políticas de Privacidade </a> e as <a href="#">Políticas de Cookies</a> do app Reciclagem para Todos.</div>
+                 
+                
+                 
+        </form>
+    </div>
+
+    <div class="login-buttons d-grid gap-2">
+        <button type="button" class="btn btn-danger">Fazer login com Google</button>
+        <button type="button" class="btn btn-primary">Fazer login com Facebook</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
