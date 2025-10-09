@@ -19,9 +19,11 @@ login_manager.login_view = 'login'  # rota que será usada para login
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(150), nullable=False)
-    numero = db.Column(db.Integer, unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-
+    cep = db.Column(db.String(8), nullable=False)
+    numero = db.Column(db.Integer, nullable=False) # VERIFICAR SE PRECISAM SER NULAS
+    email = db.Column(db.String(150), nullable=False)
+    senha = db.Column(db.String(150), nullable=False)
+    pontuacao = db.Column(db.Integer, default=0)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -31,32 +33,52 @@ def load_user(user_id):
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def pagina_inicial():
+    # Descobre a maior pontuação
+    maior_pontuacao = db.session.query(db.func.max(User.pontuacao)).scalar()
+
+    # Seleciona todos os usuários que têm essa pontuação
+    top_usuarios = User.query.filter_by(pontuacao=maior_pontuacao).all()
+
     return render_template('pagina_inicial.html')
 
-
-# CADASTRO DA EMPRESA
-@app.route('/cadastrar_empresa', methods=['GET', 'POST'])
-def cadastro_empresa():
-    return render_template('cadastro_empresa.html')
-
-
-# CADASTRO DO USUARIO
-@app.route('/cadastrar_usuario', methods=['GET', 'POST'])
-def cadastro_usuario():
-    return render_template('cadastro_usuario.html')
-
-
-# CADASTRO DOS MORADORES
-@app.route('/cadastrar_moradores', methods=['GET', 'POST'])
+@app.route('/cadastro_moradores', methods=['GET', 'POST'])
 def cadastro_moradores():
-    return render_template('cadastro_morador.html')
+    if request.method == 'POST':
+        nome = request.form['nome']
+        cep = request.form['cep']
+        numero = request.form['numero']
+        email = request.form['email']
+        senha = request.form['senha']
+        confirmarSenha = request.form['confirmarSenha']
 
+        if senha != confirmarSenha:
+            flash('As senhas não coincidem. Tente novamente.', 'danger')
+            return redirect(url_for('cadastro_moradores'))
 
-# PAGINA DE LOGIN
+        new_user = User(nome=nome, cep=cep, numero=numero, email=email, senha=generate_password_hash(senha, method='pbkdf2:sha256'))
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+
+        flash(f"Usuário {nome} cadastrado com sucesso!", "success")
+        return redirect(url_for('pagina_inicial'))
+    
+    return render_template('cadastro_moradores.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['password']
+        flash(f"Login feito com o e-mail {email}", "info")
+        return redirect(url_for('pagina_inicial'))
+    
     return render_template('login.html')
 
+# CADASTRO DOS MORADORES
+# @app.route('/cadastrar_moradores', methods=['GET', 'POST'])
+# def cadastro_moradores():
+#     return render_template('cadastro_morador.html')
 
 if __name__ == '__main__':
     if not os.path.exists('database.db'):

@@ -3,9 +3,69 @@
 {% block title %}Início - Meu Site{% endblock %}
 
 {% block content %}
-  <h1 class="text-center">Bem-vindo, !</h1>
+<div class="container">
 
-  <div class="text-center mt-4">
-    <a href="#" class="btn btn-primary">Clique aqui</a>
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5>Bem-Vindo(a), {{ current_user.nome }} 👋</h5>
+    <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
   </div>
+  <hr>
+
+  <!-- Pontuação -->
+  <div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <span>Pontuação:</span>
+      <span class="fs-4">{{ current_user.pontuacao }}</span>
+      <i class="bi bi-star-fill text-warning fs-3"></i>
+    </div>
+  </div>
+
+  <!-- Agenda -->
+  <div class="card p-3 mb-3">
+    <div class="d-flex align-items-center mb-2">
+      <i class="bi bi-calendar-event me-2 fs-4"></i>
+      <strong>Agenda</strong>
+    </div>
+    <div>
+      <!-- Conteúdo da agenda aqui -->
+    </div>
+  </div>
+
+  <!-- Ranking -->
+  <div class="card mb-3">
+    <div class="p-2 ranking-header text-center">
+        🔥 RANKING 🔥
+    </div>
+    <ul class="list-group list-group-flush">
+        {% for usuario in top_usuarios %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div><i class="bi bi-person-circle me-2"></i> {{ loop.index }}º {{ User.nome }}</div>
+            <i class="bi bi-star-fill text-warning"></i>
+        </li>
+        {% else %}
+        <li class="list-group-item text-center">Nenhum usuário cadastrado.</li>
+        {% endfor %}
+    </ul>
+  </div>
+
+
+  <!-- Notícias Ambientais -->
+  <div class="card p-3 mb-3">
+    <div class="d-flex align-items-center mb-2">
+      <i class="bi bi-globe me-2 fs-4"></i>
+      <strong>Notícias Ambientais</strong>
+    </div>
+    <div>
+      <!-- Conteúdo das notícias aqui -->
+    </div>
+  </div>
+
+</div>
+
+<!-- Botão flutuante -->
+<button class="btn btn-success floating-btn">
+  <i class="bi bi-plus"></i>
+</button>
+
 {% endblock %}
