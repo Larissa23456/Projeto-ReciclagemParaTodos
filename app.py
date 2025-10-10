@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'  # rota que será usada para login
-
+login_manager.login_message = "Por favor, faça login para acessar esta página."
 
 # Cria a tabela usuário
 class User(db.Model, UserMixin):
@@ -25,10 +25,21 @@ class User(db.Model, UserMixin):
     senha = db.Column(db.String(150), nullable=False)
     pontuacao = db.Column(db.Integer, default=0)
 
+class User_empresa(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(150), nullable=False)
+    numero = db.Column(db.Integer, nullable=False) # VERIFICAR SE PRECISAM SER NULAS
+    email = db.Column(db.String(150), nullable=False)
+    cnpj = db.Column(db.String(8), nullable=False)
+    senha = db.Column(db.String(150), nullable=False)
+    pontuacao = db.Column(db.Integer, default=0)
+
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
-
+    user = User.query.get(int(user_id))
+    if user:
+        return user
+    return User_empresa.query.get(int(user_id))
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -41,6 +52,10 @@ def pagina_inicial():
 
     return render_template('pagina_inicial.html')
 
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    return render_template('cadastro.html')
+
 @app.route('/cadastro_moradores', methods=['GET', 'POST'])
 def cadastro_moradores():
     if request.method == 'POST':
@@ -51,34 +66,91 @@ def cadastro_moradores():
         senha = request.form['senha']
         confirmarSenha = request.form['confirmarSenha']
 
+        # Verifica se o checkbox "remember" foi marcado
+        remember = 'remember' in request.form 
+
         if senha != confirmarSenha:
             flash('As senhas não coincidem. Tente novamente.', 'danger')
             return redirect(url_for('cadastro_moradores'))
 
-        new_user = User(nome=nome, cep=cep, numero=numero, email=email, senha=generate_password_hash(senha, method='pbkdf2:sha256'))
+        new_user = User(
+            nome=nome,
+            cep=cep,
+            numero=numero,
+            email=email,
+            senha=generate_password_hash(senha, method='pbkdf2:sha256')
+        )
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user)
+
+        # Faz login já com o parâmetro remember
+        login_user(new_user, remember=remember)
 
         flash(f"Usuário {nome} cadastrado com sucesso!", "success")
         return redirect(url_for('pagina_inicial'))
     
     return render_template('cadastro_moradores.html')
 
+@app.route('/cadastro_empresa', methods=['GET', 'POST'])
+def cadastro_empresa():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        numero = request.form['numero']
+        email = request.form['email']
+        cnpj = request.form['cnpj']
+        senha = request.form['senha']
+        confirmarSenha = request.form['confirmarSenha']
+
+        # Captura o checkbox "remember" do formulário
+        remember = 'remember' in request.form
+
+        if senha != confirmarSenha:
+            flash('As senhas não coincidem. Tente novamente.', 'danger')
+            return redirect(url_for('cadastro_empresa'))  # Corrigido para redirecionar para a rota correta
+
+        new_user = User_empresa(
+            nome=nome,
+            numero=numero,
+            email=email,
+            cnpj=cnpj,
+            senha=generate_password_hash(senha, method='pbkdf2:sha256')
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Faz login já com o parâmetro remember
+        login_user(new_user, remember=remember)
+
+        flash(f"Empresa {nome} cadastrada com sucesso!", "success")
+        return redirect(url_for('pagina_inicial'))
+    
+    return render_template('cadastro_empresa.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
-        senha = request.form['password']
-        flash(f"Login feito com o e-mail {email}", "info")
-        return redirect(url_for('pagina_inicial'))
-    
+        senha = request.form['senha']
+        tipo_usuario = request.form.get('tipo_usuario')
+        remember = 'remember' in request.form
+
+        if tipo_usuario == 'morador':
+            user = User.query.filter_by(email=email).first()
+        elif tipo_usuario == 'empresa':
+            user = User_empresa.query.filter_by(email=email).first()
+        else:
+            user = None
+
+        if user and check_password_hash(user.senha, senha):
+            login_user(user, remember=remember)
+            flash(f"Login feito com sucesso como {tipo_usuario}.", "success")
+            return redirect(url_for('pagina_inicial'))
+        else:
+            flash("E-mail ou senha inválidos. Tente novamente.", "danger")
+            return redirect(url_for('login'))
+
     return render_template('login.html')
 
-# CADASTRO DOS MORADORES
-# @app.route('/cadastrar_moradores', methods=['GET', 'POST'])
-# def cadastro_moradores():
-#     return render_template('cadastro_morador.html')
 
 if __name__ == '__main__':
     if not os.path.exists('database.db'):
